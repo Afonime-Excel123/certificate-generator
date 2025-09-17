@@ -6,14 +6,14 @@ import os
 import re
 
 # -----------------------------
-# CONFIG (Long Text)
+# CONFIG
 # -----------------------------
 OUTPUT_DIR = os.path.join(os.getcwd(), "generated_certificates")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# Use real Arial fonts (ensure arialbd.ttf is in fonts/ folder)
+# Use same Arial font for both (PIL will simulate bold)
 FONT_REGULAR = "fonts/arial.ttf"
-FONT_BOLD = "fonts/arialbd.ttf"  # Real bold font file
+FONT_BOLD = "fonts/arial.ttf"  # Reuse same file
 
 # Layout
 NAME_Y = 665
@@ -33,7 +33,6 @@ def get_day_with_suffix(day):
 
 
 def split_text_with_bold(text, bold_phrases):
-    """Split text into chunks marked as bold or not."""
     chunks = [(text, False)]
     for phrase in bold_phrases:
         new_chunks = []
@@ -46,17 +45,18 @@ def split_text_with_bold(text, bold_phrases):
                 before = chunk_text[:idx]
                 match = chunk_text[idx:idx + len(phrase)]
                 after = chunk_text[idx + len(phrase):]
-                if before: new_chunks.append((before, False))
+                if before:
+                    new_chunks.append((before, False))
                 new_chunks.append((match, True))
                 chunk_text = after
                 idx = chunk_text.lower().find(phrase.lower())
-            if chunk_text: new_chunks.append((chunk_text, False))
+            if chunk_text:
+                new_chunks.append((chunk_text, False))
         chunks = new_chunks
     return chunks
 
 
 def wrap_text_chunks(chunks, max_width, draw, font_reg, font_bold):
-    """Wrap text chunks into lines respecting bold formatting."""
     lines = []
     current_line = []
     current_width = 0
@@ -86,21 +86,19 @@ def generate_certificates(excel_path, template_path):
     except Exception as e:
         return {"error": f"Failed to read Excel: {e}"}
 
-    # Load fonts
     try:
         name_font = ImageFont.truetype(FONT_REGULAR, NAME_FONT_SIZE)
         paragraph_font = ImageFont.truetype(FONT_REGULAR, PARAGRAPH_FONT_SIZE)
         bold_paragraph_font = ImageFont.truetype(FONT_BOLD, PARAGRAPH_FONT_SIZE)
         id_font = ImageFont.truetype(FONT_REGULAR, ID_FONT_SIZE)
-        print("✅ Fonts loaded successfully!")
+        print("✅ Fonts loaded!")
     except Exception as e:
         print(f"❌ Font error: {e}")
-        return {"error": f"Font failed to load: {e}. Check 'fonts/' folder and .ttf files."}
+        return {"error": f"Font failed to load: {e}. Use 'fonts/arial.ttf'"}
 
     results = []
     errors = []
 
-    # Process each row
     for row in sheet.iter_rows(min_row=2, values_only=True):
         name = str(row[0]).strip() if row[0] else ""
         raw_date = row[1]
@@ -109,7 +107,7 @@ def generate_certificates(excel_path, template_path):
         course_title = str(row[4]).strip() if row[4] else ""
 
         if not name or not course_title:
-            continue  # Skip empty rows
+            continue
 
         # Format Date
         try:
@@ -136,7 +134,6 @@ def generate_certificates(excel_path, template_path):
         except Exception as e:
             return {"error": f"Failed to load template: {e}"}
 
-        # Create a fresh certificate for this person
         cert = template_image.copy()
         draw = ImageDraw.Draw(cert)
 
@@ -159,12 +156,10 @@ def generate_certificates(excel_path, template_path):
             full_text = f"has successfully completed the {course_title} course on {formatted_date}."
             errors.append(f"Write-up format error for {name}: {e}")
 
-        # Split & Wrap with bold formatting
+        # Split & Wrap
         bold_phrases = [course_title, formatted_date]
         text_chunks = split_text_with_bold(full_text, bold_phrases)
-        wrapped_lines = wrap_text_chunks(
-            text_chunks, MAX_TEXT_WIDTH, draw, paragraph_font, bold_paragraph_font
-        )
+        wrapped_lines = wrap_text_chunks(text_chunks, MAX_TEXT_WIDTH, draw, paragraph_font, bold_paragraph_font)
 
         # Draw Write-up
         y = WRITEUP_START_Y
