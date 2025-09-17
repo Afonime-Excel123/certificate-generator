@@ -13,9 +13,12 @@ OUTPUT_DIR = os.path.join(os.getcwd(), "generated_certificates")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Font paths (macOS)
-FONT_REGULAR = "/Library/Fonts/Georgia.ttf"
-FONT_BOLD = "/Library/Fonts/Georgia Bold.ttf"
+# FONT_REGULAR = "/Library/Fonts/Georgia.ttf"
+# FONT_BOLD = "/Library/Fonts/Georgia Bold.ttf"
 
+# Use bundled Arial font (works everywhere)
+FONT_REGULAR = "fonts/arial.ttf"
+FONT_BOLD = "fonts/arial.ttf"  # Arial doesn't have separate bold file — PIL will fake bold if needed
 # Layout
 NAME_Y = 665
 WRITEUP_START_Y = 820
@@ -88,10 +91,12 @@ def generate_certificates(excel_path, template_path):
     try:
         name_font = ImageFont.truetype(FONT_REGULAR, NAME_FONT_SIZE)
         paragraph_font = ImageFont.truetype(FONT_REGULAR, PARAGRAPH_FONT_SIZE)
-        bold_paragraph_font = ImageFont.truetype(FONT_BOLD, BOLD_PARAGRAPH_FONT_SIZE)
+        bold_paragraph_font = ImageFont.truetype(FONT_BOLD, PARAGRAPH_FONT_SIZE)  # Use same size
         id_font = ImageFont.truetype(FONT_REGULAR, ID_FONT_SIZE)
+        print("✅ Fonts loaded successfully!")
     except Exception as e:
-        return {"error": f"Font error: {e}. Try using Arial."}
+        print(f"❌ Font error: {e}")
+        return {"error": f"Font failed to load: {e}. Check 'fonts/' folder and .ttf file."}
 
     results = []
     errors = []
