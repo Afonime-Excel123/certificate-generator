@@ -4,6 +4,7 @@ from openpyxl import load_workbook
 from datetime import datetime
 import os
 import re
+import logging
 
 # -----------------------------
 # CONFIG (Short Text)
@@ -191,11 +192,13 @@ def generate_certificates(excel_path, template_path):
         draw.text(CERT_ID_POSITION, f"Certificate ID: {cert_id}", font=id_font, fill="black")
 
         # Save
-        safe_name = "".join(c for c in f"{name}_{course_title}" if c.isalnum() or c in " _-").replace(" ", "_")
-        output_filename = f"{safe_name}_certificate.pdf"
-        output_path = os.path.join(OUTPUT_DIR, output_filename)
-        cert.convert("RGB").save(output_path, "PDF", resolution=100.0)
-        results.append(output_filename)
+# Save
+    safe_name = "".join(c for c in f"{name}_{course_title}" if c.isalnum() or c in " _-").replace(" ", "_")
+    output_filename = f"{safe_name}_certificate.pdf"
+    output_path = os.path.join(OUTPUT_DIR, output_filename)
+    cert.convert("RGB").save(output_path, "PDF", resolution=100.0)
+    print(f"✅ Saved: {output_path}")  # ← This line!
+    results.append(output_filename)
 
     wb.close()
     return {"success": True, "generated": results, "errors": errors}
