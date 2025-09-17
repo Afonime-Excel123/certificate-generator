@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SIWES Cert Generator</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; padding: 40px; text-align: center; }
+    .container { max-width: 500px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    h1 { color: #1a5276; }
+    a { color: #3498db; text-decoration: none; font-weight: 500; }
+    a:hover { text-decoration: underline; }
+    .btn {
+      margin-top: 20px;
+      padding: 12px 24px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .btn:hover { background: #218838; }
+    .flash { padding: 10px; margin: 15px 0; border-radius: 6px; }
+    .success { background: #d4edda; color: #155724; }
+    .warning { background: #fff3cd; color: #856404; }
+    .info { background: #d1ecf1; color: #0c5460; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎓 SIWES Certificate Generator</h1>
+    <p>This app uses:</p>
+    <ul style="text-align: left;">
+      <li><code>me33.xlsx</code></li>
+      <li><code>Template4.jpg</code></li>
+      <li>Fixed positions & fonts</li>
+    </ul>
+    <a href="/generate"><button class="btn">Generate Certificates</button></a>
+    <p><a href="/download">View Generated Certificates</a></p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="flash {{ category }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+</body>
+</html>

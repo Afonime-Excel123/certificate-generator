@@ -1,0 +1,19 @@
+# Folders to ignore
+uploads/
+generated_certificates/
+
+# Large binaries
+*.pdf
+*.zip
+*.docx
+*.xlsx
+
+# Cache & system files
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+
+# Git internal temp files
+.git/objects/pack/tmp_*
+!.gitignore

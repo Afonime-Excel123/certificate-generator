@@ -1,0 +1,54 @@
+<!-- templates/short.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Short Text Certificate Generator</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; padding: 40px; text-align: center; }
+    .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    h1 { color: #1a5276; }
+    label { display: block; text-align: left; font-weight: bold; margin: 15px 0 5px; }
+    input[type="file"] { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+    select { width: 100%; padding: 8px; margin: 10px 0; border-radius: 6px; border: 1px solid #ccc; }
+    button { margin-top: 20px; padding: 12px 24px; background: #007bff; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    .flash { padding: 10px; margin: 15px 0; border-radius: 6px; }
+    .success { background: #d4edda; color: #155724; }
+    .warning { background: #fff3cd; color: #856404; }
+    .error { background: #f8d7da; color: #721c24; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📜 Short Text Certificate Generator</h1>
+    <form method="POST" enctype="multipart/form-data">
+      <label for="excel">Upload Excel File (.xlsx)</label>
+      <input type="file" name="excel" id="excel" accept=".xlsx" required />
+
+      <label for="template">Select Template</label>
+      <select name="template" id="template" required>
+        <option value="">-- Choose Template --</option>
+        <option value="template3">Template 3</option>
+        <option value="template4">Template 4</option>
+        <option value="template1">Template 1</option>
+        <option value="template5">Template 5(health care)</option>
+        <option value="template6">Template 6(others courses)</option>
+
+      </select>
+
+      <button type="submit">Generate Short Certificates</button>
+    </form>
+
+    <p><a href="{{ url_for('long_gen') }}">👈 Switch to Long Text Generator</a></p>
+    <p><a href="{{ url_for('download') }}">View Generated Certificates</a></p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="flash {{ category }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+</body>
+</html>

@@ -1,0 +1,135 @@
+/* Global reset & fonts */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", "Segoe UI", Tahoma, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px;
+    color: #333;
+}
+
+/* Main container */
+.container {
+    width: 100%;
+    max-width: 1000px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    animation: fadeIn 0.7s ease-in-out;
+}
+
+/* Header */
+.header {
+    background: #4e73df;
+    color: #fff;
+    text-align: center;
+    padding: 25px;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+/* Layout: form left, preview right */
+.content {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 25px;
+    padding: 30px;
+}
+
+/* Form styling */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #444;
+    font-size: 14px;
+}
+
+input[type="text"], select {
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    background: #f9f9f9;
+}
+
+input[type="text"]:focus, select:focus {
+    border-color: #4e73df;
+    background: #fff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(78,115,223,0.2);
+}
+
+/* Submit button */
+button {
+    padding: 14px;
+    background: #4e73df;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #2e59d9;
+    transform: translateY(-2px);
+}
+
+/* Preview styling */
+.preview-box {
+    background: #f7f9fc;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    border: 2px dashed #d1d3e2;
+    transition: all 0.3s ease;
+}
+
+.preview-box:hover {
+    border-color: #4e73df;
+    background: #eef1fb;
+}
+
+.preview-box img {
+    max-width: 100%;
+    border-radius: 12px;
+    cursor: crosshair;
+    transition: transform 0.2s ease;
+}
+
+.preview-box img:hover {
+    transform: scale(1.01);
+}
+
+/* Coordinate text */
+#coordinates {
+    margin-top: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #444;
+}
+
+/* Smooth fade animation */
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(20px);}
+    to {opacity: 1; transform: translateY(0);}
+}
