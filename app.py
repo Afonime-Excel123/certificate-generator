@@ -1,11 +1,9 @@
 # app.py
-from flask import Flask, render_template, request, flash, redirect, url_for, send_file
 import os
 from werkzeug.utils import secure_filename
 import zipfile
 import io
-from generator_long import generate_certificates as gen_long
-from generator_short import generate_certificates as gen_short
+from flask import Flask, render_template, request, flash, redirect, url_for, send_file
 
 app = Flask(__name__)
 app.secret_key = "siwes2025"
@@ -51,33 +49,29 @@ def long_gen():
             flash("❌ Please select a template.")
             return redirect(request.url)
 
-        # Generate certificates
-        result = gen_long(excel_path, template_path)
+        from generator_long import generate_certificates
+        result = generate_certificates(excel_path, template_path)
 
         if result.get("error"):
             flash(f"❌ Error: {result['error']}", "error")
-            return redirect(request.url)
         else:
             for err in result.get("errors", []):
                 flash(f"⚠️ {err}", "warning")
 
         # Create ZIP in memory
         zip_buffer = io.BytesIO()
+        output_dir = os.path.join(os.getcwd(), "generated_certificates")
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
-            output_dir = os.path.join(os.getcwd(), "generated_certificates")
-            os.makedirs(output_dir, exist_ok=True)
             for f in os.listdir(output_dir):
                 file_path = os.path.join(output_dir, f)
                 if os.path.isfile(file_path):
-                    zip_file.write(file_path, f)  # Add to ZIP
-                    print(f"📎 Added to ZIP: {f}")
+                    zip_file.write(file_path, f)
 
         zip_buffer.seek(0)
-
-        # Auto-send ZIP
         generated_count = len(result.get("generated", []))
-        zip_filename = f"certificates_{generated_count}.zip"
-        flash(f"✅ Generated {generated_count} certificates!", "success")
+        zip_filename = f"long_certificates_{generated_count}.zip"
+
+        flash(f"✅ Generated {generated_count} long certificates!", "success")
         return send_file(
             zip_buffer,
             as_attachment=True,
@@ -121,30 +115,28 @@ def short_gen():
             flash("❌ Please select a template.")
             return redirect(request.url)
 
-        result = gen_short(excel_path, template_path)
+        from generator_short import generate_certificates
+        result = generate_certificates(excel_path, template_path)
 
         if result.get("error"):
             flash(f"❌ Error: {result['error']}", "error")
-            return redirect(request.url)
         else:
             for err in result.get("errors", []):
                 flash(f"⚠️ {err}", "warning")
 
-        # Create ZIP and auto-download
+        # Create ZIP in memory
         zip_buffer = io.BytesIO()
+        output_dir = os.path.join(os.getcwd(), "generated_certificates")
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
-            output_dir = os.path.join(os.getcwd(), "generated_certificates")
-            os.makedirs(output_dir, exist_ok=True)
             for f in os.listdir(output_dir):
                 file_path = os.path.join(output_dir, f)
                 if os.path.isfile(file_path):
                     zip_file.write(file_path, f)
-                    print(f"📎 Added to ZIP: {f}")
 
         zip_buffer.seek(0)
-
         generated_count = len(result.get("generated", []))
-        zip_filename = f"certificates_{generated_count}.zip"
+        zip_filename = f"short_certificates_{generated_count}.zip"
+
         flash(f"✅ Generated {generated_count} short certificates!", "success")
         return send_file(
             zip_buffer,
@@ -154,21 +146,6 @@ def short_gen():
         )
 
     return render_template("short.html")
-
-
-@app.route("/download")
-def download():
-    output_dir = os.path.join(os.getcwd(), "generated_certificates")
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-    files = os.listdir(output_dir)
-    return render_template("success.html", files=files)
-
-
-@app.route("/download/<filename>")
-def download_file(filename):
-    output_dir = os.path.join(os.getcwd(), "generated_certificates")
-    return send_file(os.path.join(output_dir, filename), as_attachment=True)
 
 
 if __name__ == "__main__":
