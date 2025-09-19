@@ -1,0 +1,36 @@
+<!-- templates/login.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; padding: 40px; text-align: center; }
+    .container { max-width: 400px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    h1 { color: #1a5276; }
+    input[type="text"], input[type="password"] { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 6px; }
+    button { padding: 10px 16px; background: #007BFF; color: white; border: none; border-radius: 6px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    .flash { padding: 10px; margin: 15px 0; border-radius: 6px; }
+    .error { background: #f8d7da; color: #721c24; }
+    .success { background: #d4edda; color: #155724; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔐 Admin Login</h1>
+    <form method="POST">
+      <input type="text" name="username" placeholder="Username" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <button type="submit">Log In</button>
+    </form>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="flash {{ category }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+</body>
+</html>
