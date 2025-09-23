@@ -21,7 +21,7 @@ WRITEUP_START_Y = 820
 CERT_ID_POSITION = (900, 1274)
 MAX_TEXT_WIDTH = 1600
 
-NAME_FONT_SIZE = 100
+NAME_FONT_SIZE = 120
 PARAGRAPH_FONT_SIZE = 36  # bigger for readability
 ID_FONT_SIZE = 30
 
@@ -87,7 +87,7 @@ def generate_certificates(excel_path, template_path):
         return {"error": f"Failed to read Excel: {e}"}
 
     try:
-        name_font = ImageFont.truetype(FONT_REGULAR, NAME_FONT_SIZE)
+        name_font = ImageFont.truetype(FONT_BOLD, NAME_FONT_SIZE)
         paragraph_font = ImageFont.truetype(FONT_REGULAR, PARAGRAPH_FONT_SIZE)
         bold_paragraph_font = ImageFont.truetype(FONT_BOLD, PARAGRAPH_FONT_SIZE)
         id_font = ImageFont.truetype(FONT_REGULAR, ID_FONT_SIZE)
