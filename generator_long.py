@@ -11,9 +11,9 @@ import re
 OUTPUT_DIR = os.path.join(os.getcwd(), "generated_certificates")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# Use same Arial font for both (PIL will simulate bold)
-FONT_REGULAR = "fonts/arial.ttf"
-FONT_BOLD = "fonts/arial.ttf"  # Reuse same file
+# Use Cormorant Garamond fonts (downloaded into fonts/ folder)
+FONT_REGULAR = "fonts/CormorantGaramond-Regular.ttf"
+FONT_BOLD = "fonts/CormorantGaramond-SemiBold.ttf"  # or Bold.ttf if you prefer stronger
 
 # Layout
 NAME_Y = 665
@@ -22,7 +22,7 @@ CERT_ID_POSITION = (900, 1274)
 MAX_TEXT_WIDTH = 1600
 
 NAME_FONT_SIZE = 100
-PARAGRAPH_FONT_SIZE = 30
+PARAGRAPH_FONT_SIZE = 36  # bigger for readability
 ID_FONT_SIZE = 30
 
 
@@ -94,7 +94,7 @@ def generate_certificates(excel_path, template_path):
         print("✅ Fonts loaded!")
     except Exception as e:
         print(f"❌ Font error: {e}")
-        return {"error": f"Font failed to load: {e}. Use 'fonts/arial.ttf'"}
+        return {"error": f"Font failed to load: {e}. Make sure the .ttf files are in /fonts"}
 
     results = []
     errors = []
@@ -163,7 +163,7 @@ def generate_certificates(excel_path, template_path):
 
         # Draw Write-up
         y = WRITEUP_START_Y
-        line_height = paragraph_font.getbbox("Ay")[3] + 10
+        line_height = paragraph_font.getbbox("Ay")[3] + 4
         for line in wrapped_lines:
             line_width = sum(draw.textlength(word.replace('\n', ''), font=font) for word, font in line)
             x = (template_image.width - line_width) // 2
