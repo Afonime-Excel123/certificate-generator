@@ -52,16 +52,12 @@ def index():
         file.save(excel_path)
 
         template_key = request.form.get('template')
-        if template_key == 'template3':
-            template_path = 'static/Template3.jpg'
-        elif template_key == 'template4':
-            template_path = 'static/Template4.jpg'
-        elif template_key == 'template1':
-            template_path = 'static/Template1.jpeg'
-        elif template_key == 'template5':
+        if template_key == 'template5':
             template_path = 'static/Template5.jpeg'
         elif template_key == 'template6':
             template_path = 'static/Template6.jpeg'
+        elif template_key == 'template7':
+            template_path = 'static/Template7.jpg'
         else:
             flash("❌ Please select a template.")
             return redirect(request.url)
