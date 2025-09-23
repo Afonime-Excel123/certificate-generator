@@ -22,7 +22,7 @@ CERT_ID_POSITION = (900, 1274)
 MAX_TEXT_WIDTH = 1600
 
 NAME_FONT_SIZE = 130
-PARAGRAPH_FONT_SIZE = 36  # bigger for readability
+PARAGRAPH_FONT_SIZE = 39  # bigger for readability
 ID_FONT_SIZE = 30
 
 
