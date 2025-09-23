@@ -58,6 +58,8 @@ def index():
             template_path = 'static/Template6.jpeg'
         elif template_key == 'template7':
             template_path = 'static/Template7.jpg'
+        elif template_key == 'template8':
+            template_path = 'static/Template8.jpg'
         else:
             flash("❌ Please select a template.")
             return redirect(request.url)
