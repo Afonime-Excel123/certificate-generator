@@ -4,6 +4,7 @@ from openpyxl import load_workbook
 from datetime import datetime
 import os
 import re
+import shutil  # 👈 added for folder cleanup
 
 # -----------------------------
 # CONFIG
@@ -22,7 +23,7 @@ CERT_ID_POSITION = (900, 1274)
 MAX_TEXT_WIDTH = 1600
 
 NAME_FONT_SIZE = 130
-PARAGRAPH_FONT_SIZE = 39  # bigger for readability
+PARAGRAPH_FONT_SIZE = 39
 ID_FONT_SIZE = 30
 
 
@@ -80,6 +81,11 @@ def wrap_text_chunks(chunks, max_width, draw, font_reg, font_bold):
 
 
 def generate_certificates(excel_path, template_path):
+    # --- 🔥 Clear old certificates before generating new ones ---
+    if os.path.exists(OUTPUT_DIR):
+        shutil.rmtree(OUTPUT_DIR)
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+
     try:
         wb = load_workbook(excel_path)
         sheet = wb.active
