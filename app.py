@@ -28,7 +28,7 @@ def allowed_file(filename):
 # 🔐 Protect all routes except login
 @app.before_request
 def require_login():
-    if 'username' not in session and request.endpoint != 'login':
+    if 'username' not in session and request.endpoint not in ('login', 'health'):
         return redirect('/login')
 
 
