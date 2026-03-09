@@ -204,6 +204,11 @@ def logout():
     flash(f"👋 {username}, logged out.", "info")
     return redirect("/login")
 
+# 🩺 Health Check Endpoint
+@app.route("/health")
+def health():
+    return {"status": "ok"}, 200
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
