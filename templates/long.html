@@ -24,10 +24,12 @@
   <div class="container">
     <h1>🎓Certificate Generator</h1>
 
-    <div class="nav">
-      <a href="/register">Register User</a> |
-      <a href="/logout">Logout</a>
-    </div>
+<div class="nav">
+  <a href="{{ url_for('register') }}">Register User</a> |
+  <a href="{{ url_for('index') }}">Long Certificate</a> |
+  <a href="{{ url_for('short_certificates') }}">Short Certificate</a> |
+  <a href="{{ url_for('logout') }}">Logout</a>
+</div>
 
     <form method="POST" enctype="multipart/form-data">
       <label for="excel">Upload Excel File (.xlsx)</label>

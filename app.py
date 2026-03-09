@@ -94,6 +94,71 @@ def index():
 
     return render_template("long.html")
 
+@app.route("/short", methods=["GET", "POST"])
+def short_certificates():
+    if request.method == "POST":
+        if 'excel' not in request.files:
+            flash("❌ No file selected.")
+            return redirect(request.url)
+
+        file = request.files['excel']
+
+        if file.filename == '':
+            flash("❌ No file selected.")
+            return redirect(request.url)
+
+        if not allowed_file(file.filename):
+            flash("❌ Please upload a valid .xlsx file.")
+            return redirect(request.url)
+
+        filename = secure_filename(file.filename)
+        excel_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(excel_path)
+
+        template_key = request.form.get('template')
+
+        if template_key == 'template5':
+            template_path = 'static/Template5.jpeg'
+        elif template_key == 'template6':
+            template_path = 'static/Template6.jpeg'
+        elif template_key == 'template7':
+            template_path = 'static/Template7.jpg'
+        elif template_key == 'template8':
+            template_path = 'static/Template8.jpg'
+        else:
+            flash("❌ Please select a template.")
+            return redirect(request.url)
+
+        from generator_short import generate_certificates
+        result = generate_certificates(excel_path, template_path)
+
+        if result.get("error"):
+            flash(f"❌ Error: {result['error']}", "error")
+
+        # ZIP results
+        zip_buffer = io.BytesIO()
+        output_dir = os.path.join(os.getcwd(), "generated_certificates")
+
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for f in os.listdir(output_dir):
+                file_path = os.path.join(output_dir, f)
+                if os.path.isfile(file_path):
+                    zipf.write(file_path, f)
+
+        zip_buffer.seek(0)
+
+        count = len(result.get("generated", []))
+        flash(f"✅ Generated {count} certificates!", "success")
+
+        return send_file(
+            zip_buffer,
+            as_attachment=True,
+            download_name=f"certificates_{count}.zip",
+            mimetype="application/zip"
+        )
+
+    return render_template("short.html")
+
 
 # 🔐 Login Route
 @app.route("/login", methods=["GET", "POST"])

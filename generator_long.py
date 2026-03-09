@@ -4,17 +4,15 @@ from openpyxl import load_workbook
 from datetime import datetime
 import os
 import re
-import shutil  # 👈 added for folder cleanup
+import shutil  #folder cleanup
 
-# -----------------------------
+
 # CONFIG
-# -----------------------------
 OUTPUT_DIR = os.path.join(os.getcwd(), "generated_certificates")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# Use Cormorant Garamond fonts (downloaded into fonts/ folder)
 FONT_REGULAR = "fonts/CormorantGaramond-Regular.ttf"
-FONT_BOLD = "fonts/CormorantGaramond-SemiBold.ttf"  # or Bold.ttf if you prefer stronger
+FONT_BOLD = "fonts/CormorantGaramond-SemiBold.ttf"  #Bold.ttf 
 
 # Layout
 NAME_Y = 665

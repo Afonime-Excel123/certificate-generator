@@ -4,32 +4,30 @@ from openpyxl import load_workbook
 from datetime import datetime
 import os
 import re
-import logging
+import shutil  # Added for folder cleanup
 
 # -----------------------------
 # CONFIG (Short Text)
 # -----------------------------
-import os
 OUTPUT_DIR = os.path.join(os.getcwd(), "generated_certificates")
+
+# --- Clean old certificates before generating new ones ---
+if os.path.exists(OUTPUT_DIR):
+    shutil.rmtree(OUTPUT_DIR)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# # Font paths (macOS)
-# FONT_REGULAR = "/Library/Fonts/Georgia.ttf"
-# FONT_BOLD = "/Library/Fonts/Georgia Bold.ttf"
-
-# Use bundled Arial font (works everywhere)
+# Font paths
 FONT_REGULAR = "fonts/arial.ttf"
-FONT_BOLD = "fonts/arial.ttf"  # Arial doesn't have separate bold file — PIL will fake bold if needed
+FONT_BOLD = "fonts/arial.ttf"  # Arial will fake bold
+
 # Layout
 NAME_Y = 675
 WRITEUP_START_Y = 830
 CERT_ID_POSITION = (900, 1274)
 MAX_TEXT_WIDTH = 1600
-
 NAME_FONT_SIZE = 100
 PARAGRAPH_FONT_SIZE = 40
 ID_FONT_SIZE = 30
-
 name_center_x = 960  # For name alignment
 
 
@@ -52,11 +50,13 @@ def split_text_with_bold(text, bold_phrases):
                 before = chunk_text[:idx]
                 match = chunk_text[idx:idx + len(phrase)]
                 after = chunk_text[idx + len(phrase):]
-                if before: new_chunks.append((before, False))
+                if before:
+                    new_chunks.append((before, False))
                 new_chunks.append((match, True))
                 chunk_text = after
                 idx = chunk_text.lower().find(phrase.lower())
-            if chunk_text: new_chunks.append((chunk_text, False))
+            if chunk_text:
+                new_chunks.append((chunk_text, False))
         chunks = new_chunks
     return chunks
 
@@ -79,7 +79,8 @@ def wrap_text_chunks(chunks, max_width, draw, font_reg, font_bold):
                 lines.append(current_line)
                 current_line = [(clean_word, font)]
                 current_width = word_width
-    if current_line: lines.append(current_line)
+    if current_line:
+        lines.append(current_line)
     return lines
 
 
@@ -93,7 +94,7 @@ def generate_certificates(excel_path, template_path):
     try:
         name_font = ImageFont.truetype(FONT_REGULAR, NAME_FONT_SIZE)
         paragraph_font = ImageFont.truetype(FONT_REGULAR, PARAGRAPH_FONT_SIZE)
-        bold_paragraph_font = ImageFont.truetype(FONT_BOLD, PARAGRAPH_FONT_SIZE)  # Use same size
+        bold_paragraph_font = ImageFont.truetype(FONT_BOLD, PARAGRAPH_FONT_SIZE)
         id_font = ImageFont.truetype(FONT_REGULAR, ID_FONT_SIZE)
         print("✅ Fonts loaded successfully!")
     except Exception as e:
@@ -113,7 +114,7 @@ def generate_certificates(excel_path, template_path):
         if not name or not course_title:
             continue
 
-        # Format Date (Month only)
+        # Format Date
         try:
             if isinstance(raw_date, datetime):
                 formatted_date = f"{get_day_with_suffix(raw_date.day)} of {raw_date.strftime('%B')}"
@@ -141,17 +142,17 @@ def generate_certificates(excel_path, template_path):
         cert = template_image.copy()
         draw = ImageDraw.Draw(cert)
 
-        # Center Name (Your exact logic)
+        # Center Name
         try:
             name_bbox = name_font.getbbox(str(name))
             name_width = name_bbox[2] - name_bbox[0]
-            name_x = name_center_x - name_width // 2.3
+            name_x = name_center_x - name_width // 2  # TRUE center
             draw.text((name_x, NAME_Y), str(name), font=name_font, fill="black")
         except Exception as e:
             errors.append(f"Name draw error for {name}: {e}")
             continue
 
-        # Prepare Write-up (With cleaning)
+        # Prepare Write-up
         full_text = writeup_template
         if full_text:
             full_text = (full_text
@@ -172,9 +173,7 @@ def generate_certificates(excel_path, template_path):
         # Split & Wrap
         bold_phrases = [course_title, formatted_date]
         text_chunks = split_text_with_bold(full_text, bold_phrases)
-        wrapped_lines = wrap_text_chunks(
-            text_chunks, MAX_TEXT_WIDTH, draw, paragraph_font, bold_paragraph_font
-        )
+        wrapped_lines = wrap_text_chunks(text_chunks, MAX_TEXT_WIDTH, draw, paragraph_font, bold_paragraph_font)
 
         # Draw Write-up
         y = WRITEUP_START_Y
@@ -191,14 +190,13 @@ def generate_certificates(excel_path, template_path):
         # Certificate ID
         draw.text(CERT_ID_POSITION, f"Certificate ID: {cert_id}", font=id_font, fill="black")
 
-        # Save
-# Save
-    safe_name = "".join(c for c in f"{name}_{course_title}" if c.isalnum() or c in " _-").replace(" ", "_")
-    output_filename = f"{safe_name}_certificate.pdf"
-    output_path = os.path.join(OUTPUT_DIR, output_filename)
-    cert.convert("RGB").save(output_path, "PDF", resolution=100.0)
-    print(f"✅ Saved: {output_path}")  # ← This line!
-    results.append(output_filename)
+        # Save PDF
+        safe_name = "".join(c for c in f"{name}_{course_title}" if c.isalnum() or c in " _-").replace(" ", "_")
+        output_filename = f"{safe_name}_certificate.pdf"
+        output_path = os.path.join(OUTPUT_DIR, output_filename)
+        cert.convert("RGB").save(output_path, "PDF", resolution=100.0)
+        print(f"✅ Saved: {output_path}")
+        results.append(output_filename)
 
     wb.close()
     return {"success": True, "generated": results, "errors": errors}
